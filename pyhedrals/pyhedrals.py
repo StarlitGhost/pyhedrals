@@ -59,10 +59,11 @@ class RollList(object):
 
 
 class DiceParser(object):
-    def __init__(self, maxDice=10000, maxSides=10000, maxExponent=10000):
+    def __init__(self, maxDice=10000, maxSides=10000, maxExponent=10000, maxMult=1000000):
         self._MAX_DICE = maxDice
         self._MAX_SIDES = maxSides
         self._MAX_EXPONENT = maxExponent
+        self._MAX_MULT = maxMult
 
         self.lexer = lex.lex(module=self)
         self.yaccer = yacc.yacc(module=self)
@@ -184,7 +185,11 @@ class DiceParser(object):
         elif op == '-':
             p[0] = operator.sub(left, right)
         elif op == '*':
-            p[0] = operator.mul(left, right)
+            if -self._MAX_MULT <= left <= self._MAX_MULT and -self._MAX_MULT <= right <= self._MAX_MULT:
+                p[0] = operator.mul(left, right)
+            else:
+                raise InvalidOperandsException(u'multiplication operands are larger than the maximum {}'
+                                               .format(self._MAX_MULT))
         elif op == '/':
             p[0] = operator.floordiv(left, right)
         elif op == '%':
