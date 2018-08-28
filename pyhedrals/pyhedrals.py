@@ -13,8 +13,10 @@ import ply.yacc as yacc
 class UnknownCharacterException(Exception):
     pass
 
+
 class SyntaxErrorException(Exception):
     pass
+
 
 class InvalidOperandsException(Exception):
     pass
@@ -185,21 +187,25 @@ class DiceParser(object):
         elif op == '-':
             p[0] = operator.sub(left, right)
         elif op == '*':
-            if -self._MAX_MULT <= left <= self._MAX_MULT and -self._MAX_MULT <= right <= self._MAX_MULT:
+            if (-self._MAX_MULT <= left <= self._MAX_MULT and
+                    -self._MAX_MULT <= right <= self._MAX_MULT):
                 p[0] = operator.mul(left, right)
             else:
-                raise InvalidOperandsException(u'multiplication operands are larger than the maximum {}'
-                                               .format(self._MAX_MULT))
+                raise InvalidOperandsException(
+                        u'multiplication operands are larger than the maximum {}'
+                        .format(self._MAX_MULT))
         elif op == '/':
             p[0] = operator.floordiv(left, right)
         elif op == '%':
             p[0] = operator.mod(left, right)
         elif op == '^':
-            if -self._MAX_EXPONENT <= left <= self._MAX_EXPONENT and -self._MAX_EXPONENT <= right <= self._MAX_EXPONENT:
+            if (-self._MAX_EXPONENT <= left <= self._MAX_EXPONENT and
+                    -self._MAX_EXPONENT <= right <= self._MAX_EXPONENT):
                 p[0] = operator.pow(left, right)
             else:
-                raise InvalidOperandsException(u'operand or exponent is larger than the maximum {}'
-                                               .format(self._MAX_EXPONENT))
+                raise InvalidOperandsException(
+                        u'operand or exponent is larger than the maximum {}'
+                        .format(self._MAX_EXPONENT))
 
     def p_expression_uminus(self, p):
         """expression : MINUS expression %prec UMINUS"""
@@ -245,16 +251,18 @@ class DiceParser(object):
             opType = 'keep'
 
         if len(validRolls) < keepDrop:
-            raise InvalidOperandsException(u'attempted to {} {} dice when only {} were rolled'.format(opType,
-                                                                                                      keepDrop,
-                                                                                                      len(validRolls)))
+            raise InvalidOperandsException(
+                    u'attempted to {} {} dice when only {} were rolled'
+                    .format(opType, keepDrop, len(validRolls)))
 
         if op == 'kh' or op == 'dl':
             keptRolls = heapq.nlargest(keepDrop, validRolls)
         elif op == 'kl' or op == 'dh':
             keptRolls = heapq.nsmallest(keepDrop, validRolls)
         else:
-            raise NotImplementedError(u"operator '{}' is not implemented (also, this should be impossible?)")
+            raise NotImplementedError(
+                    u"operator '{}' is not implemented (also, this should be impossible?)"
+                    .format(op))
 
         # determine which rolls were dropped, and mark them as such
         dropped = list((mset(validRolls) - mset(keptRolls)).elements())
@@ -337,29 +345,34 @@ class DiceParser(object):
         comp = operator.eq
         if op.endswith('<'):
             if threshold > numSides:
-                raise InvalidOperandsException(u"{} threshold '<{}' is invalid with {} sided dice"
-                                               .format(opName, threshold, numSides))
+                raise InvalidOperandsException(
+                        u"{} threshold '<{}' is invalid with {} sided dice"
+                        .format(opName, threshold, numSides))
             comp = operator.lt
         elif op.endswith('>'):
             if threshold < 1:
-                raise InvalidOperandsException(u"{} threshold '>{}' is invalid"
-                                               .format(opName, threshold))
+                raise InvalidOperandsException(
+                        u"{} threshold '>{}' is invalid"
+                        .format(opName, threshold))
             comp = operator.gt
         elif op.endswith('<='):
             if threshold >= numSides:
-                raise InvalidOperandsException(u"{} threshold '<={}' is invalid with {} sided dice"
-                                               .format(opName, threshold, numSides))
+                raise InvalidOperandsException(
+                        u"{} threshold '<={}' is invalid with {} sided dice"
+                        .format(opName, threshold, numSides))
             comp = operator.le
         elif op.endswith('>='):
             if threshold <= 1:
-                raise InvalidOperandsException(u"{} threshold '>={}' is invalid"
-                                               .format(opName, threshold))
+                raise InvalidOperandsException(
+                        u"{} threshold '>={}' is invalid"
+                        .format(opName, threshold))
             comp = operator.ge
 
         if comp == operator.eq:
             if not 1 <= threshold <= numSides:
-                raise InvalidOperandsException(u"{} threshold '{}' is invalid with {} sided dice"
-                                               .format(opName, threshold, numSides))
+                raise InvalidOperandsException(
+                        u"{} threshold '{}' is invalid with {} sided dice"
+                        .format(opName, threshold, numSides))
 
         return comp
 
@@ -388,24 +401,31 @@ class DiceParser(object):
             raise SyntaxErrorException(u"syntax error at the end of the given expression")
 
         col = self._findColumn(p)
-        raise SyntaxErrorException(u"syntax error at '{}' (col {})".format(p.value, col))
+        raise SyntaxErrorException(
+                u"syntax error at '{}' (col {})"
+                .format(p.value, col))
 
     def _rollDice(self, numDice, numSides):
         numDice = self._sumDiceRolls(numDice)
         numSides = self._sumDiceRolls(numSides)
 
         if numDice > self._MAX_DICE:
-            raise InvalidOperandsException(u'attempted to roll more than {} dice in a single d expression'
-                                           .format(self._MAX_DICE))
+            raise InvalidOperandsException(
+                    u'attempted to roll more than {} dice in a single d expression'
+                    .format(self._MAX_DICE))
         if numSides > self._MAX_SIDES:
-            raise InvalidOperandsException(u'attempted to roll a die with more than {} sides'
-                                           .format(self._MAX_SIDES))
+            raise InvalidOperandsException(
+                    u'attempted to roll a die with more than {} sides'
+                    .format(self._MAX_SIDES))
         if numDice < 0:
-            raise InvalidOperandsException(u'attempted to roll a negative number of dice')
+            raise InvalidOperandsException(
+                    u'attempted to roll a negative number of dice')
         if numSides < 0:
-            raise InvalidOperandsException(u'attempted to roll a die with a negative number of sides')
+            raise InvalidOperandsException(
+                    u'attempted to roll a die with a negative number of sides')
         if numSides < 1:
-            raise InvalidOperandsException(u'attempted to roll a die with zero sides')
+            raise InvalidOperandsException(
+                    u'attempted to roll a die with zero sides')
 
         return RollList(numDice, numSides)
 

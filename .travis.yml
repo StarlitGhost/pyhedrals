@@ -2,11 +2,11 @@ language: python
 python:
     - "3.6"
 install:
-    - "pip install pyflakes"
+    - "pip install flake8"
     - "pip install -r requirements.txt"
 cache:
     - pip
 script:
-    - pyflakes setup.py pyhedrals/
+    - flake8 pyhedrals/
 notifications:
     - email: false
