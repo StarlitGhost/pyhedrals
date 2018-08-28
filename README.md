@@ -1,4 +1,4 @@
-# PyHedrals
+# PyHedrals [![Build Status](https://travis-ci.org/StarlitGhost/pyhedrals.svg?branch=master)](https://travis-ci.org/StarlitGhost/pyhedrals)
 
 A library for evaluating tabletop dice roll expressions.
 
