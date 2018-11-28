@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name = "pyhedrals",
-    version = "0.0.2",
+    version = "0.0.3",
     author = "StarlitGhost",
     author_email = "starlitwraith@gmail.com",
     description = "A library for evaluating tabletop dice roll expressions",
@@ -16,12 +16,15 @@ setuptools.setup(
     classifiers = [
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Topic :: Games/Entertainment",
         "Topic :: Games/Entertainment :: Role-Playing",
     ],
     install_requires = [
-        "ply>=3,<4",
+        "sly>=0.3",
     ],
+    python_requires = ">=3.6"
 )
