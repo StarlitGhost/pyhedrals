@@ -5,5 +5,7 @@ install:
     - "pip install -r requirements.txt"
 cache:
     - pip
+script:
+    - 'python3 pyhedrals/pyhedrals.py -v "5d6!>4 + ((5d(2d10)dl) - d10) * (d20 / 2) # for an unnecessarily complicated roll"'
 notifications:
     - email: false
