@@ -265,13 +265,14 @@ class DiceParser(Parser):
         rollList = p.dice_expr
         op = p.EXPLODE
 
-        threshold = rollList.numSides
-        if len(p) > 2:
+        if 'expr' in p._namemap:
             threshold = self._sumDiceRolls(p.expr)
+        else:
+            threshold = rollList.numSides
 
         comp = self._getComparisonOp('explode', op, threshold, rollList.numSides)
 
-        if comp != operator.eq and len(p) == 2:
+        if comp != operator.eq and 'expr' not in p._namemap:
             raise InvalidOperandsException('no parameter given to explode comparison')
 
         debrisList = []
@@ -298,13 +299,14 @@ class DiceParser(Parser):
         rollList = p.dice_expr
         op = p.REROLL
 
-        threshold = 1
-        if len(p) > 2:
+        if 'expr' in p._namemap:
             threshold = self._sumDiceRolls(p.expr)
+        else:
+            threshold = 1
 
         comp = self._getComparisonOp('reroll', op, threshold, rollList.numSides)
 
-        if comp != operator.eq and len(p) == 2:
+        if comp != operator.eq and 'expr' not in p._namemap:
             raise InvalidOperandsException('no parameter given to reroll comparison')
 
         rerollList = []
