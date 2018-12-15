@@ -35,4 +35,4 @@ There is also a verbose mode that outputs every individual die roll, that output
   * Adds a comment to the end of the output, so you can describe what the roll is for. eg: `d20+5 # for initiative`
   * The `#` is a literal hash, not a number this time :)
 
-If you have more ideas for operators, suggestions are welcome!
+If you have more ideas for operators, suggestions and pull requests are welcome!
