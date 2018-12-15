@@ -28,6 +28,8 @@ There is also a verbose mode that outputs every individual die roll, that output
   * Reroll: `r` `r#` `r>#` `r>=#` `r<#` `r<=#`
     * Drops and rerolls each die that rolls minimum (`r`), or a specific number (`r#`), or over/under a threshold (`r>#` `r>=#` `r<#` `r<=#`)
       * This repeats for each die rerolled. You can make it only reroll each die once with `ro` instead of `r`
+  * Count: `c` `c#` `c>#` `c>=#` `c<#` `c<=#`
+    * Counts the number of dice that roll maximum (`c`), or a specific number (`r#`), or over/under a threshold (`r># `r>=#` `r<#` `r<=#`)
   * Sorting: `s` `sa` `sd`
     * Sorts the dice rolls in ascending (`s` `sa`) or descending (`sd`) order
     * This still applies in non-verbose mode but you won't see any visible effect
