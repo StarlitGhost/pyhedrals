@@ -45,9 +45,16 @@ class RollList(object):
         self.numDice = numDice
         self.numSides = numSides
         self.rolls = [Die(numSides) for _ in range(0, numDice)]
+        self.count = False
 
     def sum(self):
-        return sum(r.value for r in self.rolls if not r.dropped)
+        return sum(self.getDieValue(r) for r in self.rolls if not r.dropped)
+
+    def getDieValue(self, d):
+        if self.count:
+            return 1
+        else:
+            return d.value
 
     def sort(self, reverse=False):
         self.rolls = sorted(self.rolls, reverse=reverse)
@@ -81,6 +88,7 @@ class DiceLexer(Lexer):
               DROPHIGHEST, DROPLOWEST,
               EXPLODE,
               REROLL,
+              COUNT,
               SORT,
               DICE,
               LPAREN, RPAREN,
@@ -100,6 +108,7 @@ class DiceLexer(Lexer):
     DROPLOWEST = r'dl'
     EXPLODE = r'!([<>]=?)?'
     REROLL = r'ro?([<>]=?)?'
+    COUNT = r'c([<>]=?)?'
     SORT = r's[ad]?'
     DICE = r'd'
     LPAREN = r'\('
@@ -148,7 +157,7 @@ class DiceParser(Parser):
                   ('left', EXPONENT),
                   ('left', KEEPHIGHEST, KEEPLOWEST,
                            DROPHIGHEST, DROPLOWEST,
-                           EXPLODE, REROLL,
+                           EXPLODE, REROLL, COUNT,
                            SORT),
                   ('left', DICE),
                   ('right', UMINUS),
@@ -328,6 +337,32 @@ class DiceParser(Parser):
 
         rollList.rolls.extend(rerollList)
 
+        return rollList
+
+    @_('dice_expr COUNT expr',
+       'dice_expr COUNT empty')
+    def dice_expr(self, p):
+        rollList = p.dice_expr
+        op = p.COUNT
+
+        if 'expr' in p._namemap:
+            threshold = self._sumDiceRolls(p.expr)
+        else:
+            threshold = rollList.numSides
+
+        comp = self._getComparisonOp('count', op, threshold, rollList.numSides)
+
+        if comp != operator.eq and 'expr' not in p._namemap:
+            raise InvalidOperandsException('no parameter given to reroll comparison')
+
+        # filter dice that have already been dropped
+        validRolls = [r for r in rollList.rolls if not r.dropped]
+
+        for roll in validRolls:
+            if not comp(roll.value, threshold):
+                roll.dropped = True
+
+        rollList.count = True
         return rollList
 
     def _getComparisonOp(self, opName, op, threshold, numSides):

@@ -48,6 +48,13 @@ script:
     - 'python3 pyhedrals/pyhedrals.py -v "12d6ro>=4 # reroll once on >=4"'
     - 'python3 pyhedrals/pyhedrals.py -v "12d6ro<4 # reroll once on <4"'
     - 'python3 pyhedrals/pyhedrals.py -v "12d6ro<=4 # reroll once on <=4"'
+    # count
+    - 'python3 pyhedrals/pyhedrals.py -v "12d10c # count maximum"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d10c1 # count 1s"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d10c>8 # count where >8"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d10c>=8 # count where >=8"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d10c<4 # count where <4"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d10c<= # count where <=4"'
     # sorting
     - 'python3 pyhedrals/pyhedrals.py -v "10d10s # sort (ascending)"'
     - 'python3 pyhedrals/pyhedrals.py -v "10d10sa # sort ascending"'
