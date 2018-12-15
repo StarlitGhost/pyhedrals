@@ -6,6 +6,53 @@ install:
 cache:
     - pip
 script:
-    - 'python3 pyhedrals/pyhedrals.py -v "5d6!>4 + ((5d(2d10)dl) - d10) * (d20 / 2) # for an unnecessarily complicated roll"'
+    # non-verbose
+    - 'python3 pyhedrals/pyhedrals.py "1d20"'
+    # basic dice
+    - 'python3 pyhedrals/pyhedrals.py -v "1d20"'
+    - 'python3 pyhedrals/pyhedrals.py -v "d20"'
+    # arithmetic
+    - 'python3 pyhedrals/pyhedrals.py -v "d20 + 1"'
+    - 'python3 pyhedrals/pyhedrals.py -v "d20 - 1"'
+    - 'python3 pyhedrals/pyhedrals.py -v "d20 * 2"'
+    - 'python3 pyhedrals/pyhedrals.py -v "d20 / 2"'
+    - 'python3 pyhedrals/pyhedrals.py -v "d20 % 2"'
+    - 'python3 pyhedrals/pyhedrals.py -v "d20 ^ 2"'
+    # keep/drop
+    - 'python3 pyhedrals/pyhedrals.py -v "4d6dl # drop lowest"'
+    - 'python3 pyhedrals/pyhedrals.py -v "4d6dh # drop highest"'
+    - 'python3 pyhedrals/pyhedrals.py -v "4d6kl # keep lowest"'
+    - 'python3 pyhedrals/pyhedrals.py -v "4d6kh # keep highest"'
+    - 'python3 pyhedrals/pyhedrals.py -v "4d6dl2 # drop lowest 2"'
+    - 'python3 pyhedrals/pyhedrals.py -v "4d6dh2 # drop highest 2"'
+    - 'python3 pyhedrals/pyhedrals.py -v "4d6kl2 # keep lowest 2"'
+    - 'python3 pyhedrals/pyhedrals.py -v "4d6kh2 # keep highest 2"'
+    # exploding
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6! # exploding"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6!5 # exploding on 5"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6!>4 # exploding on >4"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6!>=4 # exploding on >=4"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6!<4 # exploding on <4"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6!<=4 # exploding on <=4"'
+    # reroll
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6r # reroll"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6r5 # reroll on 5"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6r>4 # reroll on >4"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6r>=4 # reroll on >=4"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6r<4 # reroll on <4"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6r<=4 # reroll on <=4"'
+    # reroll once
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6ro # reroll once"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6ro5 # reroll once on 5"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6ro>4 # reroll once on >4"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6ro>=4 # reroll once on >=4"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6ro<4 # reroll once on <4"'
+    - 'python3 pyhedrals/pyhedrals.py -v "12d6ro<=4 # reroll once on <=4"'
+    # sorting
+    - 'python3 pyhedrals/pyhedrals.py -v "10d10s # sort (ascending)"'
+    - 'python3 pyhedrals/pyhedrals.py -v "10d10sa # sort ascending"'
+    - 'python3 pyhedrals/pyhedrals.py -v "10d10sd # sort descending"'
+    # complex expression
+    - 'python3 pyhedrals/pyhedrals.py -v "5d6s!>4 + ((5d(2d10)sd dl) - d10) * (d20 / 2) # complex"'
 notifications:
     - email: false
