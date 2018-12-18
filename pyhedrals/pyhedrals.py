@@ -353,7 +353,7 @@ class DiceParser(Parser):
         comp = self._getComparisonOp('count', op, threshold, rollList.numSides)
 
         if comp != operator.eq and 'expr' not in p._namemap:
-            raise InvalidOperandsException('no parameter given to reroll comparison')
+            raise InvalidOperandsException('no parameter given to count comparison')
 
         # filter dice that have already been dropped
         validRolls = [r for r in rollList.rolls if not r.dropped]
