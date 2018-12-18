@@ -230,11 +230,7 @@ class DiceParser(Parser):
     def dice_expr(self, p):
         rollList = p.dice_expr
         op = p[1]
-        if 'expr' in p._namemap:
-            keepDrop = self._sumDiceRolls(p.expr)
-        else:
-            # default to 1 if no right arg was given
-            keepDrop = 1
+        keepDrop = self._sumExpr(p) or 1
 
         # filter dice that have already been dropped
         validRolls = [r for r in rollList.rolls if not r.dropped]
@@ -274,18 +270,10 @@ class DiceParser(Parser):
         rollList = p.dice_expr
         op = p.EXPLODE
 
-        if 'expr' in p._namemap:
-            threshold = self._sumDiceRolls(p.expr)
-        else:
-            threshold = rollList.numSides
-
-        comp = self._getComparisonOp('explode', op, threshold, rollList.numSides)
-
-        if comp != operator.eq and 'expr' not in p._namemap:
-            raise InvalidOperandsException('no parameter given to explode comparison')
+        threshold = self._sumExpr(p) or rollList.numSides
+        comp = self._getComparisonOp('explode', op, p, threshold, rollList.numSides)
 
         debrisList = []
-
         def explode(die):
             die.exploded = True
 
@@ -308,18 +296,10 @@ class DiceParser(Parser):
         rollList = p.dice_expr
         op = p.REROLL
 
-        if 'expr' in p._namemap:
-            threshold = self._sumDiceRolls(p.expr)
-        else:
-            threshold = 1
-
-        comp = self._getComparisonOp('reroll', op, threshold, rollList.numSides)
-
-        if comp != operator.eq and 'expr' not in p._namemap:
-            raise InvalidOperandsException('no parameter given to reroll comparison')
+        threshold = self._sumExpr(p) or 1
+        comp = self._getComparisonOp('reroll', op, p, threshold, rollList.numSides)
 
         rerollList = []
-
         def reroll(die, recurse=True):
             die.dropped = True
             rerollDie = Die(die.numSides)
@@ -345,19 +325,11 @@ class DiceParser(Parser):
         rollList = p.dice_expr
         op = p.COUNT
 
-        if 'expr' in p._namemap:
-            threshold = self._sumDiceRolls(p.expr)
-        else:
-            threshold = rollList.numSides
-
-        comp = self._getComparisonOp('count', op, threshold, rollList.numSides)
-
-        if comp != operator.eq and 'expr' not in p._namemap:
-            raise InvalidOperandsException('no parameter given to count comparison')
+        threshold = self._sumExpr(p) or rollList.numSides
+        comp = self._getComparisonOp('count', op, p, threshold, rollList.numSides)
 
         # filter dice that have already been dropped
         validRolls = [r for r in rollList.rolls if not r.dropped]
-
         for roll in validRolls:
             if not comp(roll.value, threshold):
                 roll.dropped = True
@@ -365,7 +337,11 @@ class DiceParser(Parser):
         rollList.count = True
         return rollList
 
-    def _getComparisonOp(self, opName, op, threshold, numSides):
+    def _sumExpr(self, p):
+        if 'expr' in p._namemap:
+            return self._sumDiceRolls(p.expr)
+
+    def _getComparisonOp(self, opName, op, p, threshold, numSides):
         comp = operator.eq
         if op.endswith('<'):
             if threshold > numSides:
@@ -397,6 +373,11 @@ class DiceParser(Parser):
                 raise InvalidOperandsException(
                         "{} threshold '{}' is invalid with {} sided dice"
                         .format(opName, threshold, numSides))
+        else:
+            if 'expr' not in p._namemap:
+                raise InvalidOperandsException(
+                        "no parameter given to {} comparison"
+                        .format(opName))
 
         return comp
 
