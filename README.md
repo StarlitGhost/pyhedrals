@@ -2,6 +2,8 @@
 
 A library for evaluating tabletop dice roll expressions.
 
+Used in the Mastodon bot [DiceCat](https://github.com/StarlitGhost/DiceCat), and the IRC bot [DesertBot](https://github.com/DesertBot/DesertBot)
+
 ### Usage Overview
 
 Sample usage:
