@@ -61,8 +61,8 @@ class RollList(object):
 
     def __str__(self):
         return '{}d{}: {} ({})'.format(self.numDice, self.numSides,
-                                        ','.join(str(die) for die in self.rolls),
-                                        self.sum())
+                                       ','.join(str(die) for die in self.rolls),
+                                       self.sum())
 
 
 # Calculate the column position of the given token.
@@ -448,6 +448,17 @@ class DiceParser(Parser):
             return rollList
 
 
+class RollResult(object):
+    def __init__(self, result, rolls, description):
+        self.result = result
+        self.rolls = rolls
+        self.description = description
+
+    def strings(self):
+        rollStrings = (str(roll) for roll in self.rolls)
+        return rollStrings
+
+
 class DiceRoller(object):
     def __init__(self, maxDice=10000, maxSides=10000, maxExponent=10000, maxMult=1000000):
         self.lexer = DiceLexer()
@@ -462,13 +473,15 @@ class DiceRoller(object):
         self.reset()
 
         result = self.parser.parse(self.lexer.tokenize(dice_expr))
-        result = self.parser._sumDiceRolls(result)
-        self.description = self.parser.description
-        return result
+        if isinstance(result, RollList):
+            self.parser.rolls.append(result)
+            result = result.sum()
 
-    def getRollStrings(self):
-        rollStrings = (str(roll) for roll in self.parser.rolls)
-        return rollStrings
+        rollResult = RollResult(result,
+                                self.parser.rolls,
+                                self.parser.description)
+
+        return rollResult
 
 
 def main():
@@ -481,7 +494,7 @@ def main():
     roller = DiceRoller()
 
     try:
-        result = roller.parse(cmdArgs.diceexpr)
+        rollResult = roller.parse(cmdArgs.diceexpr)
     except OverflowError:
         print('Error: result too large to calculate')
         return
@@ -494,11 +507,12 @@ def main():
         print('Error: {}'.format(e))
         return
 
-    if roller.description:
-        result = '{} {}'.format(result, roller.description)
+    result = rollResult.result
+    if rollResult.description:
+        result = '{} {}'.format(rollResult.result, rollResult.description)
 
     if cmdArgs.verbose:
-        rollStrings = roller.getRollStrings()
+        rollStrings = rollResult.strings()
         rollString = ' | '.join(rollStrings)
 
         print('{}{}'.format('[{}] '.format(rollString) if rollString else '', result))

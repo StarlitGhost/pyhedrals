@@ -5,9 +5,9 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name = "pyhedrals",
-    version = "0.1.2",
+    version = "0.2.0",
     author = "StarlitGhost",
-    author_email = "starlitwraith@gmail.com",
+    author_email = "pyhedrals@starlitghost.xyz",
     description = "A library for evaluating tabletop dice roll expressions",
     long_description = long_description,
     long_description_content_type = "text/markdown",
